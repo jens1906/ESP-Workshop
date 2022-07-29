@@ -1,0 +1,61 @@
+#include <ESP_Mail_Client.h>
+#include <WiFi.h>
+
+#define SMTP_HOST "smtp.gmail.com"
+#define SMTP_PORT 465
+
+#define AUTHOR_EMAIL "EMAIL" // You need to accept the usage of programming to send mails
+#define AUTHOR_PASSWORD "EMAIL PASSWORD"
+#define RECIPIENT_EMAIL "EMAIL RECIEVER"
+
+SMTPSession smtp;
+
+const char* ssid = "NETWORK NAME";
+const char* password = "NETWORK CODE";
+
+
+void setup() {
+  Serial.begin(115200);
+
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+
+
+}
+void loop() {
+  smtp.debug(1);
+  ESP_Mail_Session session;
+  session.server.host_name = SMTP_HOST;
+  session.server.port = SMTP_PORT;
+  session.login.email = AUTHOR_EMAIL;
+  session.login.password = AUTHOR_PASSWORD;
+  session.login.user_domain = "";
+  SMTP_Message message;
+  message.sender.name = "NAME OF MESSAGE";//Message name
+  message.sender.email = AUTHOR_EMAIL;
+  message.subject = "Readings from trashcan";
+  message.addRecipient("YOUR NAME", RECIPIENT_EMAIL);// Change to your name
+
+  message.html.content += "<p><b>Text</b></p>";
+
+  if (!smtp.connect(&session)) {
+    return;
+  }
+  if (!MailClient.sendMail(&smtp, &message)) {
+    Serial.println("Error sending Email, " + smtp.errorReason());
+  }
+
+  delay(10000);
+}
