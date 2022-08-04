@@ -25,7 +25,7 @@ void setup() {
 void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin("http://espworkshop.ml/62205b18-4b3b-4383-bdeb-033f5bbd42bb/");
+    http.begin("________________________");
     http.addHeader("Content-Type", "text/plain");
     int httpResponseCode = http.POST("Lorem Ipsum");
     if (httpResponseCode > 0) {
